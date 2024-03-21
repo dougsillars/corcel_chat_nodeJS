@@ -1,0 +1,82 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat App</title>
+<style>
+  body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  #chat {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #333;
+  }
+  #messages {
+    height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 5px;
+    background: #111;
+  }
+  #messageInput {
+    width: calc(100% - 60px);
+    margin-right: 10px;
+    background-color: dimgray;
+    color:white;
+  }
+  button {
+    width: 50px;
+    background-color: dimgray;
+    color:white;
+  }
+</style>
+</head>
+<body>
+<h1> NodeJS Cortext sample app </h1>
+<div id="chat">
+  <div id="messages"></div>
+  <input type="text" id="messageInput">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+let conversationHistory = [];
+
+function sendMessage() {
+  const messageInput = document.getElementById('messageInput');
+  const userMessage = messageInput.value;
+  messageInput.value = '';
+
+  // Add the user's message to the conversation history
+  conversationHistory.push({ role: 'user', content: userMessage });
+  console.log(conversationHistory);
+  // Display the user's message
+  const messagesDiv = document.getElementById('messages');
+  messagesDiv.innerHTML += `<div><b>User</b>: ${userMessage}</div>`;
+
+  // Send the conversation history to the server
+  fetch('/sendMessage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ messages: conversationHistory })
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Add the assistant's response to the conversation history
+    conversationHistory.push({ role: 'assistant', content: data.content });
+
+    // Display the assistant's response
+    messagesDiv.innerHTML += `<div><b>Assistant</b>: ${data.content}</div>`;
+  })
+  .catch(error => console.error('Error:', error));
+}
+</script>
+</body>
+</html>
