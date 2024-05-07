@@ -1,4 +1,4 @@
-asdf
+
 #NodeJS sample app
 
 This app is a simple NodeJS chat application using Corcel's Cortext chat API.
